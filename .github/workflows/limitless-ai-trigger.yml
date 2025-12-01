@@ -1,0 +1,24 @@
+name: Limitless AI Trigger
+
+on:
+  schedule:
+    # 15分ごとに実行 (UTC時間)
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  trigger-zapier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Limitless AI Zap
+        run: |
+          echo "Triggering Limitless AI Zap at $(date)"
+          curl -X POST "${{ secrets.ZAPIER_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "source": "github-actions",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'",
+              "trigger_reason": "15min-schedule",
+              "repository": "sayasaya8039/Zapier"
+            }' || echo "Webhook call failed"
+            
